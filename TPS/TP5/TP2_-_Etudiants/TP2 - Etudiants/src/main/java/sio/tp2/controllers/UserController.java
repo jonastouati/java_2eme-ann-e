@@ -5,6 +5,7 @@ import javafx.event.Event;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import org.springframework.stereotype.Component;
+import sio.tp2.dto.TicketUser;
 import sio.tp2.entities.Ticket;
 import sio.tp2.entities.User;
 import sio.tp2.services.EtatService;
@@ -36,7 +37,7 @@ public class UserController
     @javafx.fxml.FXML
     private TableColumn tcEtatTicket;
     @javafx.fxml.FXML
-    private TableView <Ticket> tvTickets;
+    private TableView <TicketUser> tvTickets;
 
     public void initDatas(User leUser)
     {
@@ -45,10 +46,10 @@ public class UserController
         tcNumeroTicket.setCellValueFactory(new PropertyValueFactory<>("idTicket"));
         tcNomTicket.setCellValueFactory(new PropertyValueFactory<>("nomTicket"));
         tcDateTicket.setCellValueFactory(new PropertyValueFactory<>("dateTicket"));
-        tcEtatTicket.setCellValueFactory(new PropertyValueFactory<>("nomEtat"));
+        tcEtatTicket.setCellValueFactory(new PropertyValueFactory<>("etatTicket"));
 
         // A vous de jouer
-        tvTickets.setItems(FXCollections.observableList(ticketService.findAll()));
+        tvTickets.setItems(FXCollections.observableList(ticketService.getTicketsByUser(user.getId())));
         cboEtats.setItems(FXCollections.observableList(etatService.getAllNomsEtats()));
     }
 
@@ -63,6 +64,6 @@ public class UserController
                         tvTickets.getSelectionModel().getSelectedItem(),
                         cboEtats.getSelectionModel().getSelectedItem().toString()
                 );
-        tvTickets.setItems(FXCollections.observableList(ticketService.findAll()));
+        tvTickets.setItems(FXCollections.observableList(ticketService.getTicketsByUser(user.getId())));
     }
 }
