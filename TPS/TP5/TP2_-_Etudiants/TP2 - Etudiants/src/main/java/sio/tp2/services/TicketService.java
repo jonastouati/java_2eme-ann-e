@@ -42,4 +42,12 @@ public class TicketService
         nouveauTicket.setNumEtat(etat);
         ticketRepository.save(nouveauTicket);
     }
+    public void modifierTicket(TicketUser ticket, String nomEtat)
+    {
+        Etat etat = etatRepository.findByNomEtat(nomEtat);
+        Ticket updateTicket = ticketRepository.findById(ticket.getIdTicket()).get();
+
+        updateTicket.setNumEtat(etat);
+        ticketRepository.save(updateTicket);
+    }
 }

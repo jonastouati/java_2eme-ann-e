@@ -22,6 +22,7 @@ import java.util.ResourceBundle;
 public class TP2Controller implements Initializable
 {
     private final UserService userService;
+    private final UserController userController;
 
 
     @FXML
@@ -35,9 +36,9 @@ public class TP2Controller implements Initializable
 
     Alert alert;
 
-    public TP2Controller(UserService userService) {
+    public TP2Controller(UserService userService, UserController userController) {
         this.userService = userService;
-
+        this.userController = userController;
     }
 
     @FXML
@@ -69,9 +70,12 @@ public class TP2Controller implements Initializable
         }
         else {
             {
+                User user = userService.getByLoginAndPwdUser(txtLogin.getText(), txtMotDePasse.getText());
                 FXMLLoader fxmlLoader = new FXMLLoader(TP2Application.class.getResource("user-view.fxml"));
                 fxmlLoader.setControllerFactory(TP2Application.getSpringContext()::getBean);
                 Scene scene = new Scene(fxmlLoader.load());
+                UserController userController = fxmlLoader.getController();
+                userController.initDatas(user);
                 Stage stage = new Stage();
                 stage.setTitle("user");
                 stage.setScene(scene);
