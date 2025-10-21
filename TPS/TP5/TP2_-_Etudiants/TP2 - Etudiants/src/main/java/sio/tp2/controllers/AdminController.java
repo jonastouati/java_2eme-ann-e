@@ -6,9 +6,11 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import org.springframework.stereotype.Component;
+import sio.tp2.dto.TicketUser;
 import sio.tp2.entities.Ticket;
 import sio.tp2.entities.User;
 import sio.tp2.repositories.UserRepository;
+import sio.tp2.services.EtatService;
 import sio.tp2.services.TicketService;
 import sio.tp2.services.UserService;
 
@@ -18,6 +20,7 @@ import java.util.ResourceBundle;
 public class AdminController implements Initializable {
     private final UserService userService;
     private final TicketService ticketService;
+    private final EtatService etatService;
     @javafx.fxml.FXML
     private TableColumn tcNomTicket;
     @javafx.fxml.FXML
@@ -39,11 +42,12 @@ public class AdminController implements Initializable {
     @javafx.fxml.FXML
     private TableColumn tcNumeroUser;
     @javafx.fxml.FXML
-    private TableView <Ticket>tvTickets;
+    private TableView <TicketUser>tvTickets;
 
-    public AdminController(UserService userService, TicketService ticketService) {
+    public AdminController(UserService userService, TicketService ticketService, EtatService etatService) {
         this.userService = userService;
         this.ticketService = ticketService;
+        this.etatService = etatService;
     }
 
 
@@ -51,8 +55,7 @@ public class AdminController implements Initializable {
     public void tvUsersClicked(Event event)
     {
         // A vous de jouer
-        User user = tvUsers.getSelectionModel().getSelectedItem();
-        tvTickets.setItems(FXCollections.observableList(this.ticketService.getTicketsByUser(user)));
+        tvTickets.setItems(FXCollections.observableArrayList(ticketService.getTicketsByUser(tvUsers.getSelectionModel().getSelectedItem().getId())));
 
 
     }
@@ -60,6 +63,14 @@ public class AdminController implements Initializable {
     @javafx.fxml.FXML
     public void btnInsererClicked(Event event) {
         // A vous de jouer
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Erreur");
+        alert.setHeaderText(null);
+
+        ticketService.insererNouveauTicket
+                (tvUsers.getSelectionModel().getSelectedItem(),
+                        txtNomTicket.getText(),
+                        cboEtats.getSelectionModel().getSelectedItem().toString());
     }
 
     @Override
@@ -69,10 +80,11 @@ public class AdminController implements Initializable {
         tcNumeroTicket.setCellValueFactory(new PropertyValueFactory<>("idTicket"));
         tcNomTicket.setCellValueFactory(new PropertyValueFactory<>("nomTicket"));
         tcDateTicket.setCellValueFactory(new PropertyValueFactory<>("dateTicket"));
-        tcEtatTicket.setCellValueFactory(new PropertyValueFactory<>("nomEtat"));
+        tcEtatTicket.setCellValueFactory(new PropertyValueFactory<>("etatTicket"));
 
         // A vous de jouer
         tvUsers.setItems(FXCollections.observableArrayList(userService.findAll()));
+        cboEtats.setItems(FXCollections.observableArrayList(etatService.getAllNomsEtats()));
 
     }
 }
